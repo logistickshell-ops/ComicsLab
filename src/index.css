@@ -414,6 +414,28 @@ button, [role="button"] {
   }
 }
 
+/* =========== STAGE WIDTH (fixes collapsed page) =========== */
+.stage-max {
+  width: 100%;
+}
+/* Keep the comic page proportional but never taller than the viewport */
+.stage-page {
+  width: min(100%, calc(66vh * var(--ratio, 0.8)));
+  margin-inline: auto;
+}
+@media (min-width: 1024px) {
+  .stage-page {
+    width: min(100%, 680px, calc(62vh * var(--ratio, 0.8)));
+  }
+}
+
+/* =========== MOBILE ACTION BAR =========== */
+.mobile-bar {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  padding-left: max(0.5rem, env(safe-area-inset-left));
+  padding-right: max(0.5rem, env(safe-area-inset-right));
+}
+
 /* Mobile-specific touch optimizations */
 @media (max-width: 768px) {
   /* Make touch targets larger */
@@ -482,19 +504,28 @@ button, [role="button"] {
 /* Small mobile devices */
 @media (max-width: 480px) {
   .btn-lg {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
   }
-  
-  /* Even larger touch targets for very small screens */
-  .btn {
-    min-height: 48px;
-  }
-  
-  /* Larger icons on small screens */
-  .btn-icon {
-    min-height: 48px;
-    min-width: 48px;
+}
+
+/* Bubble drag / resize handles: big enough for fingers, small enough for tiny bubbles */
+.handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-ink);
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  touch-action: none;
+}
+@media (min-width: 768px) {
+  .handle {
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
   }
 }
 

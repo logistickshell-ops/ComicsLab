@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, GripVertical, Plus, X } from "lucide-react";
 import type { Panel } from "../lib/types";
 import { cn } from "../utils/cn";
@@ -12,8 +12,22 @@ interface Props {
   onAdd: () => void;
 }
 
+/** HTML5 drag-n-drop only makes sense with a mouse; on touch it blocks scrolling. */
+function useCanDrag() {
+  const [can, setCan] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const apply = () => setCan(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  return can;
+}
+
 export default function Filmstrip({ panels, selectedId, onSelect, onReorder, onDelete, onAdd }: Props) {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const canDrag = useCanDrag();
 
   return (
     <div className="scroll-comic flex gap-2.5 overflow-x-auto pb-1.5 pt-0.5">
@@ -22,7 +36,7 @@ export default function Filmstrip({ panels, selectedId, onSelect, onReorder, onD
         return (
           <div
             key={panel.id}
-            draggable
+            draggable={canDrag}
             onDragStart={(e) => {
               setDragIdx(i);
               e.dataTransfer.effectAllowed = "move";
@@ -60,10 +74,12 @@ export default function Filmstrip({ panels, selectedId, onSelect, onReorder, onD
               {i + 1}
             </span>
 
-            <GripVertical
-              size={16}
-              className="pointer-events-none absolute bottom-7 right-0.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]"
-            />
+            {canDrag && (
+              <GripVertical
+                size={16}
+                className="pointer-events-none absolute bottom-7 right-0.5 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]"
+              />
+            )}
 
              <button
                aria-label="Удалить кадр"

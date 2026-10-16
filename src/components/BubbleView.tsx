@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import {
   BUBBLE_METRICS,
   FONT_FAMILY,
@@ -192,25 +192,36 @@ export default function BubbleView({
           <>
             <button
               aria-label="Удалить надпись"
-              className="btn btn-primary btn-icon absolute -right-3 -top-3 z-40"
+              className="handle absolute -right-2 -top-2 z-40 bg-pop-red text-white"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(b.id);
               }}
             >
-              <X size={13} strokeWidth={3.5} />
+              <X size={16} strokeWidth={3.5} />
+            </button>
+            <button
+              aria-label="Редактировать текст"
+              className="handle absolute -left-2 -top-2 z-40 bg-white"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDoubleClick(b.id);
+              }}
+            >
+              <Pencil size={15} strokeWidth={3} />
             </button>
             <div
               aria-label="Изменить размер"
-              className="btn btn-secondary btn-icon absolute -bottom-2.5 -right-2.5 z-40 cursor-nwse-resize touch-drag"
+              className="handle absolute -bottom-2 -right-2 z-40 cursor-nwse-resize bg-pop-blue"
               onPointerDown={(e) => {
                 e.stopPropagation();
                 onPointerDown(e, b.id, "resize");
               }}
             >
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M11 1L1 11M11 6L6 11" stroke="#141310" strokeWidth="2.4" strokeLinecap="round" />
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+                <path d="M11 1L1 11M11 6L6 11" stroke="white" strokeWidth="2.4" strokeLinecap="round" />
               </svg>
             </div>
           </>

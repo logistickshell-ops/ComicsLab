@@ -85,8 +85,8 @@ export interface InspectorProps {
 
 function Section({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
   return (
-    <section className="border-b-2 border-dashed border-ink/15 px-4 py-4 last:border-b-0">
-      <div className="mb-3 flex items-center justify-between gap-2">
+    <section className="border-b-2 border-dashed border-ink/15 px-3.5 py-3.5 last:border-b-0 sm:px-4 sm:py-4">
+      <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
         <h3 className="font-display text-[13px] uppercase tracking-wide">{title}</h3>
         {right}
       </div>

@@ -4,6 +4,8 @@ import {
   ClipboardPaste,
   Download,
   Hand,
+  ImagePlus,
+  MessageCircle,
   MousePointerClick,
   Sparkles,
   TriangleAlert,
@@ -461,7 +463,7 @@ export default function App() {
       </header>
 
       {/* ---------- marquee ---------- */}
-      <div className="overflow-hidden border-b-[3px] border-ink bg-ink py-1.5 text-pop-yellow">
+      <div className="hidden overflow-hidden border-b-[3px] border-ink bg-ink py-1.5 text-pop-yellow sm:block">
         <div className="anim-marquee flex w-max whitespace-nowrap font-display text-[12px] uppercase tracking-widest">
           {[0, 1].map((half) => (
             <span key={half} className="flex">
@@ -480,22 +482,22 @@ export default function App() {
       <main className="mx-auto flex max-w-[1400px] flex-col gap-3 px-2 py-3 sm:gap-4 sm:px-3 sm:py-4 lg:grid lg:grid-cols-[minmax(0,1fr)_400px] lg:grid-rows-[auto_minmax(0,1fr)_auto] lg:gap-x-6">
         {/* intro */}
         <div className="lg:col-start-1 lg:row-start-1">
-          <h1 className="font-display text-[26px] uppercase leading-[1.05] sm:text-4xl">
+          <h1 className="font-display text-[21px] uppercase leading-[1.08] sm:text-4xl">
             Собери свой комикс
             <span className="text-pop-red"> за минуту</span>
           </h1>
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="scroll-comic -mx-3 mt-2 flex gap-1.5 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:gap-1.5 sm:overflow-visible sm:px-0 sm:pb-0">
             {steps.map((s) => (
               <span
                 key={s.n}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full border-2 border-ink px-2.5 py-1 text-[12px] font-bold",
+                  "flex shrink-0 items-center gap-1.5 rounded-full border-2 border-ink px-2 py-1 text-[11px] font-bold sm:px-2.5 sm:text-[12px]",
                   s.done ? "bg-ink text-pop-yellow" : "bg-white shadow-comic-sm"
                 )}
               >
                 <span
                   className={cn(
-                    "flex h-5 w-5 items-center justify-center rounded-full border-2 font-display text-[11px]",
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 font-display text-[11px]",
                     s.done ? "border-pop-yellow bg-pop-red text-white" : "border-ink bg-pop-yellow"
                   )}
                 >
@@ -508,8 +510,8 @@ export default function App() {
         </div>
 
         {/* stage */}
-        <div className="sticky top-[76px] z-20 self-start lg:col-start-1 lg:row-start-2 lg:top-[88px]">
-          <div className="relative rounded-3xl border-[3px] border-ink bg-white/70 p-3 shadow-comic-lg sm:p-4">
+        <div className="w-full lg:sticky lg:top-[88px] lg:z-20 lg:self-start lg:col-start-1 lg:row-start-2">
+          <div className="relative rounded-3xl border-[3px] border-ink bg-white/70 p-2 shadow-comic-lg sm:p-4">
             <span
               aria-hidden
               className="anim-float pointer-events-none absolute -left-3 -top-4 z-10 hidden select-none rounded-xl border-2 border-ink bg-pop-cyan px-2.5 py-1 font-display text-xs uppercase shadow-comic-sm md:block"
@@ -598,7 +600,7 @@ export default function App() {
         </div>
 
         {/* tips - hide on mobile to save space */}
-        <div className="hidden lg:grid lg:gap-3 lg:col-start-1 lg:row-start-3 sm:grid sm:grid-cols-3 sm:gap-2">
+        <div className="hidden sm:grid sm:grid-cols-3 sm:gap-2 lg:col-start-1 lg:row-start-3 lg:gap-3">
           {[
             {
               icon: <Hand size={16} strokeWidth={2.5} />,
@@ -629,14 +631,44 @@ export default function App() {
         </div>
       </main>
 
-      <footer className="mx-auto max-w-[1400px] px-5 pb-8 pt-1 text-center text-[12px] font-semibold text-ink/55">
+      <footer className="mx-auto max-w-[1400px] px-4 pb-28 pt-1 text-center text-[12px] font-semibold text-ink/55 sm:px-5 sm:pb-8">
         <p className="mb-1">
           КомиксЛаб — всё собирается локально в твоём браузере, картинки никуда не отправляются.
         </p>
         <p>
-          Работает как обычный сайт и как Telegram Mini App. Автор: <span className="font-display text-pop-red">Disa</span>
+          Работает как обычный сайт и как Telegram Mini App. Автор:{" "}
+          <span className="font-display text-pop-red">Disa</span>
         </p>
       </footer>
+
+      {/* ---------- mobile action bar ---------- */}
+      <div
+        className="mobile-bar fixed inset-x-0 bottom-0 z-50 border-t-[3px] border-ink bg-pop-yellow/97 backdrop-blur-sm lg:hidden"
+        style={{ backgroundColor: "rgba(255,212,0,0.97)" }}
+      >
+        <div className="mx-auto flex max-w-[560px] gap-2 pt-2">
+          <button onClick={() => fileRef.current?.click()} className="btn btn-tertiary btn-md flex-1 flex-col gap-0.5 px-1">
+            <ImagePlus size={20} strokeWidth={2.5} />
+            <span className="text-[10px]">Фото</span>
+          </button>
+          <button
+            onClick={() => addBubble("speech")}
+            disabled={!panels.length}
+            className="btn btn-secondary btn-md flex-1 flex-col gap-0.5 px-1 disabled:opacity-40"
+          >
+            <MessageCircle size={20} strokeWidth={2.5} />
+            <span className="text-[10px]">Реплика</span>
+          </button>
+          <button
+            onClick={() => doExport("download")}
+            disabled={!panels.length || exporting}
+            className="btn btn-primary btn-md flex-1 flex-col gap-0.5 px-1 disabled:opacity-40"
+          >
+            <Download size={20} strokeWidth={2.5} />
+            <span className="text-[10px]">{exporting ? "…" : "PNG"}</span>
+          </button>
+        </div>
+      </div>
 
       {/* hidden file inputs */}
       <input
@@ -689,7 +721,7 @@ export default function App() {
         <div
           key={toast.id}
           className={cn(
-            "anim-toast fixed bottom-5 left-1/2 z-[90] flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center gap-2.5 rounded-2xl border-[3px] border-ink px-4 py-3 font-bold shadow-comic-lg",
+            "anim-toast fixed bottom-24 left-1/2 z-[90] flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center gap-2.5 rounded-2xl border-[3px] border-ink px-4 py-3 font-bold shadow-comic-lg lg:bottom-5",
             toast.kind === "ok" ? "bg-ink text-white" : "bg-pop-red text-white"
           )}
         >

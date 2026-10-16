@@ -41,7 +41,7 @@ export default function ExportModal({ url, onClose, onDownload, onShare }: Props
           </p>
         )}
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <button
             onClick={onDownload}
             className="btn btn-primary btn-lg flex-1"

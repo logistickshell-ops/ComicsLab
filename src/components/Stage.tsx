@@ -154,8 +154,8 @@ export default function Stage(p: Props) {
 
   return (
       <div
-        className="relative mx-auto w-full"
-        style={{ maxWidth: `min(680px, ${(55 * p.ratio).toFixed(1)}vh, 100%)` }}
+        className="stage-max relative"
+        style={{ "--ratio": p.ratio } as React.CSSProperties}
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -171,10 +171,11 @@ export default function Stage(p: Props) {
       <div
         ref={pageRef}
         className={cn(
-          "relative w-full shadow-comic-lg [container-type:inline-size]",
+          "stage-page relative shadow-comic-lg [container-type:inline-size]",
           dark ? "halftone-white" : "halftone-paper"
         )}
         style={{
+          ...( { "--ratio": p.ratio } as React.CSSProperties),
           aspectRatio: `${p.ratio}`,
           backgroundColor: p.bg,
           border: `${Math.max(3, pageW * 0.0063)}px solid ${dark ? "#FFFFFF" : "#141310"}`,
@@ -298,7 +299,7 @@ export default function Stage(p: Props) {
                     {/* editor-only badge */}
                     <span
                       className={cn(
-                        "pointer-events-none absolute left-1.5 top-1.5 z-40 flex h-5 min-w-5 items-center justify-center rounded-md border-2 border-ink px-1 font-display text-[11px] leading-none text-white",
+                        "pointer-events-none absolute left-1 top-1 z-40 flex h-6 min-w-6 items-center justify-center rounded-md border-2 border-ink px-1 font-display text-[12px] leading-none text-white sm:left-1.5 sm:top-1.5 sm:h-5 sm:min-w-5 sm:text-[11px]",
                         selected ? "bg-pop-blue" : "bg-ink/85"
                       )}
                     >
@@ -306,7 +307,7 @@ export default function Stage(p: Props) {
                     </span>
 
                     {selected && (
-                      <span className="pointer-events-none absolute bottom-1.5 right-1.5 z-40 flex items-center gap-1 rounded-md border-2 border-ink bg-white/95 px-1.5 py-0.5 text-[10px] font-bold">
+                      <span className="pointer-events-none absolute bottom-1 right-1 z-40 hidden items-center gap-1 rounded-md border-2 border-ink bg-white/95 px-1.5 py-0.5 text-[10px] font-bold sm:flex">
                         <MousePointer2 size={11} /> тяни фото
                       </span>
                     )}
