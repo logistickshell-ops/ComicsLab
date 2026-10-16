@@ -1,0 +1,514 @@
+@import "tailwindcss";
+
+@theme {
+  --font-ui: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Russo One", "Golos Text", sans-serif;
+  --font-comic: "Neucha", cursive;
+  --font-hand: "Caveat", cursive;
+
+  --color-pop-yellow: #ffd400;
+  --color-pop-red: #ff3b30;
+  --color-pop-blue: #2563eb;
+  --color-pop-cyan: #00b8f4;
+  --color-pop-pink: #ff6ec7;
+  --color-ink: #141310;
+  --color-paper: #fff6e5;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--color-ink);
+  background: #ffd400;
+  overscroll-behavior-y: none;
+}
+
+/* =========== UNIFIED BUTTON STYLES =========== */
+
+/* Base button reset */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid var(--color-ink);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.btn:hover {
+  transform: translate(-1px, -1px);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--color-ink) !important;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Primary button - red */
+.btn-primary {
+  background-color: var(--color-pop-red);
+  color: white;
+  box-shadow: 5px 5px 0 0 var(--color-ink);
+}
+
+.btn-primary:hover {
+  background-color: #ff2a1a;
+}
+
+/* Secondary button - yellow */
+.btn-secondary {
+  background-color: var(--color-pop-yellow);
+  color: var(--color-ink);
+  box-shadow: 5px 5px 0 0 var(--color-ink);
+}
+
+.btn-secondary:hover {
+  background-color: #e6be00;
+}
+
+/* Tertiary button - white */
+.btn-tertiary {
+  background-color: white;
+  color: var(--color-ink);
+  box-shadow: 5px 5px 0 0 var(--color-ink);
+}
+
+.btn-tertiary:hover {
+  background-color: #f5f5f5;
+}
+
+/* Cyan button */
+.btn-cyan {
+  background-color: var(--color-pop-cyan);
+  color: white;
+  box-shadow: 5px 5px 0 0 var(--color-ink);
+}
+
+.btn-cyan:hover {
+  background-color: #00a0d8;
+}
+
+/* Small button variant */
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 10px;
+  border-width: 2px;
+}
+
+/* Medium button variant */
+.btn-md {
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  border-width: 2px;
+}
+
+/* Large button variant */
+.btn-lg {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 16px;
+  border-width: 3px;
+}
+
+/* Icon-only button */
+.btn-icon {
+  padding: 0.5rem;
+  border-radius: 10px;
+  border-width: 2px;
+}
+
+/* Full-width button */
+.btn-full {
+  width: 100%;
+}
+
+/* Button with comic press effect (backward compatible) */
+.btn-press {
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+}
+
+.btn-press:hover {
+  transform: translate(-1px, -1px);
+}
+
+.btn-press:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 0 #141310 !important;
+}
+
+/* =========== HALFTONE BACKGROUNDS =========== */
+.halftone {
+  background-image: radial-gradient(rgba(20, 19, 16, 0.13) 1.6px, transparent 1.7px);
+  background-size: 16px 16px;
+}
+.halftone-paper {
+  background-image: radial-gradient(rgba(20, 19, 16, 0.055) 1.2px, transparent 1.3px);
+  background-size: 13px 13px;
+}
+.halftone-white {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1.6px, transparent 1.7px);
+  background-size: 15px 15px;
+}
+
+/* =========== COMIC SHADOWS =========== */
+.shadow-comic {
+  box-shadow: 5px 5px 0 0 #141310;
+}
+.shadow-comic-sm {
+  box-shadow: 3px 3px 0 0 #141310;
+}
+.shadow-comic-lg {
+  box-shadow: 9px 9px 0 0 #141310;
+}
+.shadow-comic-red {
+  box-shadow: 5px 5px 0 0 #ff3b30;
+}
+.shadow-comic-blue {
+  box-shadow: 5px 5px 0 0 #2563eb;
+}
+
+/* =========== ANIMATIONS =========== */
+@keyframes pop-in {
+  0% { transform: scale(0.6) rotate(-3deg); opacity: 0; }
+  60% { transform: scale(1.06) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.anim-pop-in {
+  animation: pop-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-9px) rotate(var(--rot, 0deg)); }
+}
+.anim-float {
+  animation: float-slow 5s ease-in-out infinite;
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.anim-marquee {
+  animation: marquee-x 26s linear infinite;
+}
+
+@keyframes toast-in {
+  from { transform: translateY(14px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.anim-toast {
+  animation: toast-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50% { transform: rotate(2.5deg); }
+}
+.anim-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+/* =========== RANGE SLIDERS =========== */
+input[type="range"].range-comic {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #141310;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"].range-comic::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ff3b30;
+  border: 3px solid #141310;
+  box-shadow: 2px 2px 0 0 #141310;
+  cursor: grab;
+}
+input[type="range"].range-comic::-webkit-slider-thumb:active { cursor: grabbing; }
+input[type="range"].range-comic::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff3b30;
+  border: 3px solid #141310;
+  box-shadow: 2px 2px 0 0 #141310;
+  cursor: grab;
+}
+
+/* =========== COLOR INPUT =========== */
+input[type="color"].color-comic {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid #141310;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+}
+input[type="color"].color-comic::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type="color"].color-comic::-webkit-color-swatch { border: none; border-radius: 6px; }
+input[type="color"].color-comic::-moz-color-swatch { border: none; border-radius: 6px; }
+
+/* =========== SCROLLBARS =========== */
+.scroll-comic::-webkit-scrollbar { width: 10px; height: 10px; }
+.scroll-comic::-webkit-scrollbar-track { background: transparent; }
+.scroll-comic::-webkit-scrollbar-thumb {
+  background: #141310;
+  border-radius: 999px;
+  border: 2px solid #fff6e5;
+}
+
+/* outlined display text (comic titles) */
+.text-stroke {
+  -webkit-text-stroke: 2px #141310;
+  paint-order: stroke fill;
+}
+
+/* touch dragging inside stage shouldn't scroll the page */
+.touch-drag {
+  touch-action: none;
+}
+
+/* dotted dropzone marching border */
+@keyframes dash-move {
+  to { background-position: 24px 0, -24px 100%, 0 -24px, 100% 24px; }
+}
+.dropzone-dash {
+  background-image:
+    repeating-linear-gradient(90deg, #141310 0 12px, transparent 12px 24px),
+    repeating-linear-gradient(90deg, #141310 0 12px, transparent 12px 24px),
+    repeating-linear-gradient(0deg, #141310 0 12px, transparent 12px 24px),
+    repeating-linear-gradient(0deg, #141310 0 12px, transparent 12px 24px);
+  background-size: 100% 3px, 100% 3px, 3px 100%, 3px 100%;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-repeat: no-repeat;
+  animation: dash-move 0.8s linear infinite;
+}
+
+/* =========== MOBILE OPTIMIZATIONS =========== */
+
+/* Prevent double-tap zoom on buttons */
+button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Larger touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .btn-sm {
+    padding: 0.625rem 0.875rem;
+    min-height: 36px;
+  }
+  
+  .btn-md {
+    padding: 0.75rem 1.25rem;
+    min-height: 44px;
+  }
+  
+  .btn-lg {
+    padding: 1rem 1.75rem;
+    min-height: 48px;
+  }
+  
+  .btn-icon {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem;
+  }
+  
+  /* Larger sliders on mobile */
+  input[type="range"].range-comic {
+    height: 14px;
+  }
+  
+  input[type="range"].range-comic::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* Better spacing on mobile */
+  :root {
+    --mobile-gap: 0.75rem;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 768px) {
+  /* Adjust stage sizing on mobile */
+  .stage-container {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Better inspector layout on mobile */
+  .inspector-container {
+    width: 100%;
+  }
+  
+  /* Larger buttons on small screens */
+  .btn-lg {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  /* Adjust bubble editing on mobile */
+  .bubble-editor textarea {
+    min-height: 80px;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent default iOS button styling */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Fix input focus on iOS */
+  input:focus, textarea:focus {
+    outline: none;
+  }
+}
+
+/* Prevent overscroll bounce on iOS */
+@supports (-webkit-overflow-scrolling: touch) {
+  body {
+    overscroll-behavior: none;
+  }
+}
+
+/* Mobile-specific touch optimizations */
+@media (max-width: 768px) {
+  /* Make touch targets larger */
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .btn-sm {
+    min-height: 36px;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn-md {
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+  }
+  
+  .btn-lg {
+    min-height: 48px;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .btn-icon {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem;
+  }
+  
+  /* Larger sliders on mobile */
+  input[type="range"].range-comic {
+    height: 14px;
+  }
+  
+  input[type="range"].range-comic::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* Better spacing for touch */
+  button, [role="button"] {
+    min-height: 40px;
+  }
+  
+  /* Prevent zoom on focus */
+  input:focus, textarea:focus, select:focus {
+    font-size: 16px !important;
+  }
+  
+  /* Better scroll behavior */
+  .scroll-comic {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Adjust stage for mobile */
+  .stage-container {
+    width: 100%;
+  }
+  
+  /* Make inspector full width on mobile */
+  .inspector-container {
+    width: 100%;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .btn-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Even larger touch targets for very small screens */
+  .btn {
+    min-height: 48px;
+  }
+  
+  /* Larger icons on small screens */
+  .btn-icon {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Tablet and larger mobile */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .btn-md {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Hover devices (desktop) */
+@media (hover: hover) {
+  .btn {
+    min-height: auto;
+    min-width: auto;
+  }
+}
