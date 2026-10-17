@@ -241,7 +241,7 @@ export default function Inspector(p: InspectorProps) {
             title="Раскадровка"
             right={
               <span className="rounded-md border-2 border-ink bg-white px-1.5 py-0.5 font-display text-[11px]">
-                {p.panels.length}/4
+                {p.panels.length}/8
               </span>
             }
           >
@@ -258,7 +258,7 @@ export default function Inspector(p: InspectorProps) {
             </p>
              <button
               onClick={p.onAddPhotos}
-              disabled={p.panels.length >= 4}
+              disabled={p.panels.length >= 8}
               className="btn btn-cyan btn-lg btn-full mt-3 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Upload size={17} strokeWidth={2.6} />

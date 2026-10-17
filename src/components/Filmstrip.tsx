@@ -111,7 +111,7 @@ export default function Filmstrip({ panels, selectedId, onSelect, onReorder, onD
         );
       })}
 
-       {panels.length < 4 && (
+       {panels.length < 8 && (
          <button
            onClick={onAdd}
            className="btn btn-tertiary btn-md flex-col h-[86px] w-[86px] border-dashed border-ink/50 bg-white/50 text-ink/60 hover:border-ink hover:bg-white hover:text-ink"

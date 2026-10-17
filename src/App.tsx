@@ -4,10 +4,10 @@ import {
   ClipboardPaste,
   Download,
   Hand,
-  ImagePlus,
-  MessageCircle,
   MousePointerClick,
+  Share2,
   Sparkles,
+  Trash2,
   TriangleAlert,
 } from "lucide-react";
 import Stage from "./components/Stage";
@@ -165,9 +165,9 @@ export default function App() {
         showToast("Нужны именно картинки", "warn");
         return;
       }
-      const room = 4 - panels.length;
+      const room = 8 - panels.length;
       if (room <= 0) {
-        showToast("Уже 4 кадра — это максимум для одного листа", "warn");
+        showToast("Уже 8 кадров — это максимум для одного листа", "warn");
         haptic("error");
         return;
       }
@@ -175,14 +175,14 @@ export default function App() {
       try {
         const created: Panel[] = [];
         for (const f of take) created.push(await fileToPanel(f));
-        setPanels((prev) => [...prev, ...created].slice(0, 4));
+        setPanels((prev) => [...prev, ...created].slice(0, 8));
         if (created[0]) setSelectedPanelId(created[0].id);
         setTab("frames");
         haptic("success");
         showToast(
           imgs.length > room
-            ? `Добавил ${created.length} кадр(а), остальные не влезли — лимит 4`
-            : `Кадров на листе: ${Math.min(4, panels.length + created.length)}`
+            ? `Добавил ${created.length} кадр(а), остальные не влезли — лимит 8`
+            : `Кадров на листе: ${Math.min(8, panels.length + created.length)}`
         );
       } catch {
         showToast("Не смог открыть картинку. Попробуй JPG или PNG", "warn");
@@ -405,7 +405,7 @@ export default function App() {
 
   const steps = useMemo(
     () => [
-      { n: 1, t: "Загрузи 1–4 фото", done: panels.length > 0 },
+      { n: 1, t: "Загрузи 1–8 фото", done: panels.length > 0 },
       { n: 2, t: "Расставь кадры", done: panels.length > 1 },
       { n: 3, t: "Добавь реплики", done: bubbles.length > 0 },
       { n: 4, t: "Скачай PNG", done: false },
@@ -647,25 +647,37 @@ export default function App() {
         style={{ backgroundColor: "rgba(255,212,0,0.97)" }}
       >
         <div className="mx-auto flex max-w-[560px] gap-2 pt-2">
-          <button onClick={() => fileRef.current?.click()} className="btn btn-tertiary btn-md flex-1 flex-col gap-0.5 px-1">
-            <ImagePlus size={20} strokeWidth={2.5} />
-            <span className="text-[10px]">Фото</span>
-          </button>
-          <button
-            onClick={() => addBubble("speech")}
-            disabled={!panels.length}
-            className="btn btn-secondary btn-md flex-1 flex-col gap-0.5 px-1 disabled:opacity-40"
-          >
-            <MessageCircle size={20} strokeWidth={2.5} />
-            <span className="text-[10px]">Реплика</span>
-          </button>
           <button
             onClick={() => doExport("download")}
             disabled={!panels.length || exporting}
             className="btn btn-primary btn-md flex-1 flex-col gap-0.5 px-1 disabled:opacity-40"
+            title="Выгрузить комикс в PNG"
           >
-            <Download size={20} strokeWidth={2.5} />
-            <span className="text-[10px]">{exporting ? "…" : "PNG"}</span>
+            <Download size={19} strokeWidth={2.6} />
+            <span className="text-[11px] leading-tight">{exporting ? "Сборка…" : "Выгрузить"}</span>
+          </button>
+          <button
+            onClick={() => doExport("share")}
+            disabled={!panels.length || exporting}
+            className="btn btn-secondary btn-md flex-1 flex-col gap-0.5 px-1 disabled:opacity-40"
+            title="Поделиться комиксом"
+          >
+            <Share2 size={19} strokeWidth={2.6} />
+            <span className="text-[11px] leading-tight">Поделиться</span>
+          </button>
+          <button
+            onClick={() => {
+              if (panels.length === 0) return;
+              if (window.confirm("Очистить все кадры и надписи?")) {
+                resetAll();
+              }
+            }}
+            disabled={!panels.length}
+            className="btn btn-tertiary btn-md flex-1 flex-col gap-0.5 px-1 text-pop-red hover:bg-red-50 disabled:opacity-40"
+            title="Удалить все кадры и начать заново"
+          >
+            <Trash2 size={19} strokeWidth={2.6} />
+            <span className="text-[11px] leading-tight">Удалить все</span>
           </button>
         </div>
       </div>

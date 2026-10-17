@@ -225,11 +225,11 @@ export default function Stage(p: Props) {
                <span className="anim-float flex h-14 w-14 items-center justify-center rounded-2xl border-[3px] border-ink bg-pop-yellow shadow-comic sm:h-16 sm:w-16">
                  <ImagePlus size={26} strokeWidth={2.4} className="sm:size-6" />
                </span>
-               <span className="font-display text-[15px] uppercase leading-tight sm:text-lg">
-                 Перетащи сюда
-                 <br />
-                 1–4 картинки
-               </span>
+                <span className="font-display text-[15px] uppercase leading-tight sm:text-lg">
+                  Перетащи сюда
+                  <br />
+                  1–8 картинок
+                </span>
                <span className="max-w-[240px] text-[11px] font-medium text-ink/60 sm:max-w-[280px] sm:text-sm">
                  или нажми, чтобы выбрать файлы
                </span>
