@@ -25,6 +25,7 @@ interface Props {
   onSetEditing: (id: string | null) => void;
   onDropFiles: (files: File[]) => void;
   onAddClick: () => void;
+  tapToEdit?: boolean;
 }
 
 type Drag =
@@ -322,6 +323,7 @@ export default function Stage(p: Props) {
                           pageW={pageW}
                           selected={p.selectedBubbleId === b.id}
                           editing={p.editingBubbleId === b.id}
+                          tapToEdit={p.tapToEdit}
                           onPointerDown={bubblePointer}
                           onDoubleClick={(id) => {
                             p.onSelectBubble(id);

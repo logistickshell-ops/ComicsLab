@@ -228,6 +228,22 @@ body {
   animation: wiggle 0.5s ease-in-out infinite;
 }
 
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.anim-sheet {
+  animation: sheet-up 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.anim-fade {
+  animation: fade-in 0.18s ease both;
+}
+
 /* =========== RANGE SLIDERS =========== */
 input[type="range"].range-comic {
   -webkit-appearance: none;

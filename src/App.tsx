@@ -13,8 +13,10 @@ import {
 import Stage from "./components/Stage";
 import Inspector, { type Tab } from "./components/Inspector";
 import ExportModal from "./components/ExportModal";
+import BubbleSheet from "./components/BubbleSheet";
 import { fileToPanel, srcToPanel } from "./lib/images";
 import { downloadBlob, renderComic, shareBlob } from "./lib/render";
+import { useIsMobile } from "./lib/useIsMobile";
 import { haptic, initTelegram, isTelegram, setupMainButton } from "./lib/telegram";
 import {
   FORMATS,
@@ -74,6 +76,7 @@ export default function App() {
   const [selectedPanelId, setSelectedPanelId] = useState<string | null>(null);
   const [selectedBubbleId, setSelectedBubbleId] = useState<string | null>(null);
   const [editingBubbleId, setEditingBubbleId] = useState<string | null>(null);
+  const [sheetBubbleId, setSheetBubbleId] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [result, setResult] = useState<{ url: string; blob: Blob } | null>(null);
   const [toast, setToast] = useState<Toast | null>(null);
@@ -83,6 +86,26 @@ export default function App() {
   const replaceTarget = useRef<string | null>(null);
   const hydrated = useRef(false);
   const toastTimer = useRef<number>(0);
+  const isMobile = useIsMobile();
+
+  /**
+   * On phones the inline bubble textarea is tiny and the keyboard hides it,
+   * so we open the bottom-sheet editor instead. Desktop keeps inline editing.
+   */
+  const handleSetEditing = useCallback(
+    (id: string | null) => {
+      if (id && isMobile) {
+        setSelectedBubbleId(id);
+        setSheetBubbleId(id);
+        setEditingBubbleId(null);
+        return;
+      }
+      setEditingBubbleId(id);
+      setSheetBubbleId(null);
+      if (id) setTab("text");
+    },
+    [isMobile]
+  );
 
   const format = FORMATS.find((f) => f.id === formatId) ?? FORMATS[0];
   const layouts = LAYOUTS[panels.length] ?? LAYOUTS[1];
@@ -283,9 +306,13 @@ export default function App() {
       setSelectedPanelId(panelId);
       setTab("text");
       haptic("light");
-      window.setTimeout(() => setEditingBubbleId(nb.id), 60);
+      if (isMobile) {
+        window.setTimeout(() => setSheetBubbleId(nb.id), 120);
+      } else {
+        window.setTimeout(() => setEditingBubbleId(nb.id), 60);
+      }
     },
-    [panels, selectedPanelId, showToast]
+    [panels, selectedPanelId, showToast, isMobile]
   );
 
   const deleteBubble = useCallback(
@@ -293,9 +320,10 @@ export default function App() {
       setBubbles((prev) => prev.filter((b) => b.id !== id));
       if (selectedBubbleId === id) setSelectedBubbleId(null);
       if (editingBubbleId === id) setEditingBubbleId(null);
+      if (sheetBubbleId === id) setSheetBubbleId(null);
       haptic("light");
     },
-    [selectedBubbleId, editingBubbleId]
+    [selectedBubbleId, editingBubbleId, sheetBubbleId]
   );
 
   const duplicateBubble = useCallback(
@@ -319,8 +347,10 @@ export default function App() {
       const b = bubbles.find((x) => x.id === id);
       setSelectedBubbleId(id);
       if (b) setSelectedPanelId(b.panelId);
+      // on phones the list doubles as a quick way to jump into the editor
+      if (isMobile) setSheetBubbleId(id);
     },
-    [bubbles]
+    [bubbles, isMobile]
   );
 
   /* ---------- export ---------- */
@@ -412,6 +442,9 @@ export default function App() {
     ],
     [panels.length, bubbles.length]
   );
+
+  const sheetBubble = sheetBubbleId ? bubbles.find((b) => b.id === sheetBubbleId) ?? null : null;
+  const sheetPanelIndex = sheetBubble ? panels.findIndex((p) => p.id === sheetBubble.panelId) : -1;
 
   return (
     <div className="halftone min-h-dvh bg-pop-yellow">
@@ -543,12 +576,10 @@ export default function App() {
               onUpdatePanel={updatePanel}
               onUpdateBubble={updateBubble}
               onDeleteBubble={deleteBubble}
-              onSetEditing={(id) => {
-                setEditingBubbleId(id);
-                if (id) setTab("text");
-              }}
+              onSetEditing={handleSetEditing}
               onDropFiles={(files) => addFilesRef.current(files)}
               onAddClick={() => fileRef.current?.click()}
+              tapToEdit={isMobile}
             />
           </div>
         </div>
@@ -714,6 +745,18 @@ export default function App() {
           }
         }}
       />
+
+      {/* mobile bubble editor */}
+      {sheetBubble && (
+        <BubbleSheet
+          bubble={sheetBubble}
+          panelIndex={Math.max(0, sheetPanelIndex)}
+          onUpdate={(patch) => updateBubble(sheetBubble.id, patch)}
+          onDuplicate={() => duplicateBubble(sheetBubble.id)}
+          onDelete={() => deleteBubble(sheetBubble.id)}
+          onClose={() => setSheetBubbleId(null)}
+        />
+      )}
 
       {/* result modal */}
       {result && (

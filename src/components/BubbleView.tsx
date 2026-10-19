@@ -22,6 +22,8 @@ interface Props {
   onTextChange: (bubbleId: string, text: string) => void;
   onEditEnd: () => void;
   onDelete: (bubbleId: string) => void;
+  /** tap (instead of double-click) an already selected bubble to edit it — mobile friendly */
+  tapToEdit?: boolean;
 }
 
 export default function BubbleView({
@@ -34,9 +36,12 @@ export default function BubbleView({
   onTextChange,
   onEditEnd,
   onDelete,
+  tapToEdit,
 }: Props) {
   const innerRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const downPt = useRef<{ x: number; y: number } | null>(null);
+  const wasSelected = useRef(false);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
@@ -94,9 +99,19 @@ export default function BubbleView({
         transform: "translate(-50%, -50%)",
       }}
       onPointerDown={(e) => {
+        downPt.current = { x: e.clientX, y: e.clientY };
+        wasSelected.current = selected;
         if (editing) return;
         e.stopPropagation();
         onPointerDown(e, b.id, "move");
+      }}
+      onClick={(e) => {
+        if (!tapToEdit || editing) return;
+        const d = downPt.current;
+        // second tap on an already selected bubble (and not a drag) opens the editor
+        if (!wasSelected.current) return;
+        if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 10) return;
+        onDoubleClick(b.id);
       }}
       onDoubleClick={(e) => {
         e.stopPropagation();

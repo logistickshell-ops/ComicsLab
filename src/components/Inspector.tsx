@@ -1,16 +1,6 @@
 import type { ReactNode } from "react";
 import {
-  ArrowDown,
-  ArrowDownLeft,
-  ArrowDownRight,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  ArrowUpLeft,
-  ArrowUpRight,
-  Ban,
   Cloud,
-  Copy,
   Download,
   Images,
   MessageCircle,
@@ -27,19 +17,17 @@ import {
   Zap,
 } from "lucide-react";
 import Filmstrip from "./Filmstrip";
+import BubbleControls from "./BubbleControls";
+import { Chip, Section, SliderRow } from "./ui";
 import {
-  BUBBLE_COLORS,
   FILTERS,
   FORMATS,
   LAYOUTS,
   PAGE_BGS,
   type Bubble,
-  type BubbleFont,
   type BubbleType,
   type Panel,
-  type TailDir,
 } from "../lib/types";
-import { FONT_FAMILY } from "../lib/geometry";
 import { cn } from "../utils/cn";
 
 export type Tab = "frames" | "text" | "style";
@@ -83,119 +71,9 @@ export interface InspectorProps {
 
 /* ---------------- shared bits ---------------- */
 
-function Section({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
-  return (
-    <section className="border-b-2 border-dashed border-ink/15 px-3.5 py-3.5 last:border-b-0 sm:px-4 sm:py-4">
-      <div className="mb-2.5 flex items-center justify-between gap-2 sm:mb-3">
-        <h3 className="font-display text-[13px] uppercase tracking-wide">{title}</h3>
-        {right}
-      </div>
-      {children}
-    </section>
-  );
-}
 
-function Chip({
-  active,
-  onClick,
-  children,
-  className,
-}: {
-  active?: boolean;
-  onClick: () => void;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "rounded-lg border-2 border-ink px-2 py-1.5 text-[12px] font-bold leading-none transition active:translate-y-0.5 sm:px-2.5 sm:text-[13px]",
-        active ? "bg-ink text-pop-yellow shadow-none" : "bg-white shadow-comic-sm hover:-translate-y-px",
-        className
-      )}
-    >
-      {children}
-    </button>
-  );
-}
 
-function SliderRow({
-  label,
-  value,
-  min,
-  max,
-  step,
-  fmt,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  fmt: (v: number) => string;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <label className="mb-3 block last:mb-0">
-      <span className="mb-1.5 flex items-center justify-between text-[13px] font-bold">
-        {label}
-        <span className="rounded-md border-2 border-ink bg-pop-yellow px-1.5 py-0.5 font-display text-[11px]">
-          {fmt(value)}
-        </span>
-      </span>
-      <input
-        type="range"
-        className="range-comic w-full"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-      />
-    </label>
-  );
-}
 
-function ColorRow({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="mb-3 last:mb-0">
-      <div className="mb-1.5 text-[13px] font-bold">{label}</div>
-      <div className="flex flex-wrap items-center gap-1.5">
-        {BUBBLE_COLORS.map((c) => (
-          <button
-            key={c}
-            aria-label={c}
-            onClick={() => onChange(c)}
-            className={cn(
-              "h-8 w-8 rounded-lg border-2 transition",
-              value.toLowerCase() === c.toLowerCase()
-                ? "scale-110 border-pop-blue shadow-comic-blue"
-                : "border-ink hover:-translate-y-0.5"
-            )}
-            style={{ background: c }}
-          />
-        ))}
-        <input
-          type="color"
-          className="color-comic h-8 w-10"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          aria-label="Свой цвет"
-        />
-      </div>
-    </div>
-  );
-}
 
 /* ---------------- main ---------------- */
 
@@ -566,137 +444,15 @@ export default function Inspector(p: InspectorProps) {
   );
 }
 
-/* ---------------- bubble editor ---------------- */
+/* ---------------- bubble editor (desktop panel) ---------------- */
 
-const FONTS: { id: BubbleFont; name: string }[] = [
-  { id: "neucha", name: "Комикс" },
-  { id: "russo", name: "Заголовок" },
-  { id: "caveat", name: "От руки" },
-];
-
-const TAILS: { id: TailDir; icon: ReactNode; label: string }[] = [
-  { id: "top-left", icon: <ArrowUpLeft size={15} />, label: "Вверх-влево" },
-  { id: "top", icon: <ArrowUp size={15} />, label: "Вверх" },
-  { id: "top-right", icon: <ArrowUpRight size={15} />, label: "Вверх-вправо" },
-  { id: "left", icon: <ArrowLeft size={15} />, label: "Влево" },
-  { id: "none", icon: <Ban size={15} />, label: "Без хвоста" },
-  { id: "right", icon: <ArrowRight size={15} />, label: "Вправо" },
-  { id: "bottom-left", icon: <ArrowDownLeft size={15} />, label: "Вниз-влево" },
-  { id: "bottom", icon: <ArrowDown size={15} />, label: "Вниз" },
-  { id: "bottom-right", icon: <ArrowDownRight size={15} />, label: "Вниз-вправо" },
-];
-
-function BubbleEditor({ bubble: b, p }: { bubble: Bubble; p: InspectorProps }) {
-  const up = (patch: Partial<Bubble>) => p.onUpdateBubble(b.id, patch);
+function BubbleEditor({ bubble, p }: { bubble: Bubble; p: InspectorProps }) {
   return (
-    <div className="anim-pop-in">
-      <textarea
-        value={b.text}
-        onChange={(e) => up({ text: e.target.value })}
-        rows={2}
-        placeholder="Текст надписи…"
-        className="mb-3 w-full resize-y rounded-xl border-2 border-ink bg-white px-3 py-2 text-[15px] font-semibold outline-none transition placeholder:text-ink/35 focus:shadow-comic-sm"
-        style={{ fontFamily: FONT_FAMILY[b.font], fontSize: b.font === "caveat" ? 19 : 15 }}
-      />
-
-      <div className="mb-1.5 text-[13px] font-bold">Тип облачка</div>
-      <div className="mb-4 grid grid-cols-4 gap-1.5">
-        {(
-          [
-            { type: "speech", name: "Реплика", icon: <MessageCircle size={16} /> },
-            { type: "thought", name: "Мысль", icon: <Cloud size={16} /> },
-            { type: "caption", name: "Подпись", icon: <RectangleHorizontal size={16} /> },
-            { type: "shout", name: "Крик", icon: <Zap size={16} /> },
-          ] as { type: BubbleType; name: string; icon: ReactNode }[]
-        ).map((t) => (
-          <button
-            key={t.type}
-            onClick={() => up({ type: t.type })}
-            className={cn(
-              "flex flex-col items-center gap-0.5 rounded-lg border-2 border-ink px-1 py-1.5 text-[10px] font-bold transition",
-              b.type === t.type ? "bg-ink text-pop-yellow" : "bg-white shadow-comic-sm hover:-translate-y-px"
-            )}
-          >
-            {t.icon}
-            {t.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-1.5 text-[13px] font-bold">Шрифт</div>
-           <div className="mb-4 grid grid-cols-3 gap-1.5">
-         {FONTS.map((f) => (
-           <button
-             key={f.id}
-             onClick={() => up({ font: f.id })}
-             className={cn(
-               "btn btn-tertiary btn-sm flex-col h-auto p-1",
-               b.font === f.id ? "bg-ink text-pop-yellow border-pop-yellow" : ""
-             )}
-           >
-             <span className="block text-base leading-tight" style={{ fontFamily: FONT_FAMILY[f.id] }}>
-               Привет!
-             </span>
-             <span className="block text-[10px] font-bold opacity-70">{f.name}</span>
-           </button>
-         ))}
-       </div>
-
-      <SliderRow
-        label="Размер текста"
-        value={b.fontSize}
-        min={1.6}
-        max={7}
-        step={0.1}
-        fmt={(v) => v.toFixed(1)}
-        onChange={(v) => up({ fontSize: v })}
-      />
-      <SliderRow
-        label="Ширина облачка"
-        value={b.w}
-        min={16}
-        max={96}
-        step={1}
-        fmt={(v) => `${Math.round(v)}%`}
-        onChange={(v) => up({ w: v })}
-      />
-
-      <div className="mt-4">
-        <ColorRow label="Фон облачка" value={b.bg} onChange={(v) => up({ bg: v })} />
-        <ColorRow label="Цвет текста" value={b.color} onChange={(v) => up({ color: v })} />
-      </div>
-
-      {(b.type === "speech" || b.type === "thought") && (
-        <div className="mt-4">
-          <div className="mb-1.5 text-[13px] font-bold">
-            {b.type === "speech" ? "Хвост облачка" : "Пузырьки к герою"}
-          </div>
-           <div className="grid w-[132px] grid-cols-3 gap-1">
-             {TAILS.map((t) => (
-               <button
-                 key={t.id}
-                 title={t.label}
-                 onClick={() => up({ tail: t.id })}
-                 className={cn(
-                   "btn btn-icon",
-                   b.tail === t.id ? "bg-pop-blue text-white border-pop-blue" : "btn-tertiary"
-                 )}
-               >
-                 {t.icon}
-               </button>
-             ))}
-           </div>
-        </div>
-      )}
-
-       <div className="mt-4 flex gap-1.5">
-         <button onClick={() => p.onDuplicateBubble(b.id)} className="btn btn-tertiary btn-md flex-1">
-           <Copy size={13} /> <span className="hidden sm:inline">Дублировать</span>
-         </button>
-         <button onClick={() => p.onDeleteBubble(b.id)} className="btn btn-primary btn-md flex-1">
-           <Trash2 size={13} /> <span className="hidden sm:inline">Удалить</span>
-         </button>
-       </div>
-    </div>
+    <BubbleControls
+      bubble={bubble}
+      onUpdate={(patch) => p.onUpdateBubble(bubble.id, patch)}
+      onDuplicate={() => p.onDuplicateBubble(bubble.id)}
+      onDelete={() => p.onDeleteBubble(bubble.id)}
+    />
   );
 }
